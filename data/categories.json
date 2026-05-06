@@ -1,0 +1,30 @@
+{
+  "leagues": [
+    {
+      "name": "Premier League",
+      "teams": ["Manchester City", "Liverpool", "Arsenal", "Chelsea", "Manchester United"]
+    },
+    {
+      "name": "La Liga",
+      "teams": ["Real Madrid", "Barcelona", "Atletico Madrid"]
+    },
+    {
+      "name": "Serie A",
+      "teams": ["Inter Milan", "AC Milan", "Juventus"]
+    },
+    {
+      "name": "Bundesliga",
+      "teams": ["Bayern Munich", "Borussia Dortmund"]
+    },
+    {
+      "name": "Ligue 1",
+      "teams": ["Paris Saint-Germain"]
+    },
+    {
+      "name": "Champions League",
+      "teams": ["Real Madrid", "Manchester City", "Bayern Munich"]
+    }
+  ],
+  "seasons": ["2025/26", "2024/25"],
+  "categories": ["home", "away", "third", "training"]
+}

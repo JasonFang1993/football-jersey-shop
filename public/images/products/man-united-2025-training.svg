@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f3f4f6"/>
+      <stop offset="100%" stop-color="#e5e7eb"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg)" rx="8"/>
+  <!-- Jersey body -->
+  <path d="M120 100 L160 80 L200 90 L240 80 L280 100 L300 160 L280 170 L280 320 L120 320 L120 170 L100 160 Z" fill="#DA291C" stroke="#00000020" stroke-width="1"/>
+  <!-- Left sleeve -->
+  <path d="M120 100 L60 140 L50 200 L100 210 L120 170 Z" fill="#DA291C" stroke="#00000020" stroke-width="1"/>
+  <!-- Right sleeve -->
+  <path d="M280 100 L340 140 L350 200 L300 210 L280 170 Z" fill="#DA291C" stroke="#00000020" stroke-width="1"/>
+  <!-- Collar -->
+  <path d="M175 85 L200 90 L225 85 L220 105 L200 100 L180 105 Z" fill="#FFE500" stroke="#00000030" stroke-width="0.5"/>
+  <!-- Number -->
+  <text x="200" y="230" text-anchor="middle" font-family="Arial,sans-serif" font-size="64" font-weight="bold" fill="#FFFFFF" opacity="0.3">10</text>
+</svg>
