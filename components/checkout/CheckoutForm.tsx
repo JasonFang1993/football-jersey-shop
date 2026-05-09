@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { FormField } from "./FormField";
 import { Button } from "@/components/ui/Button";
 import { useCartStore } from "@/lib/cart-store";
@@ -19,10 +18,15 @@ const INITIAL_FORM: CheckoutFormData = {
   country: "",
 };
 
+type PaymentMethod = "alipay" | "stripe";
+
 export function CheckoutForm() {
-  const router = useRouter();
   const [form, setForm] = useState<CheckoutFormData>(INITIAL_FORM);
   const [errors, setErrors] = useState<Partial<Record<keyof CheckoutFormData, string>>>({});
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("stripe");
+  const items = useCartStore((state) => state.items);
+  const totalPrice = useCartStore((state) => state.totalPrice());
   const clearCart = useCartStore((state) => state.clearCart);
 
   const updateField = (field: keyof CheckoutFormData) => (value: string) => {
@@ -51,12 +55,80 @@ export function CheckoutForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleStripeCheckout = async () => {
+    const response = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items,
+        email: form.email,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error || "Failed to create checkout session");
+    }
+
+    clearCart();
+    window.location.href = result.data.url;
+  };
+
+  const handleAlipayCheckout = async () => {
+    const response = await fetch("/api/payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items,
+        totalAmount: totalPrice,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error || "支付请求失败");
+    }
+
+    const { paymentUrl, params } = result.data;
+
+    const formEl = document.createElement("form");
+    formEl.method = "POST";
+    formEl.action = paymentUrl;
+    formEl.style.display = "none";
+
+    Object.entries(params).forEach(([key, value]) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = value as string;
+      formEl.appendChild(input);
+    });
+
+    document.body.appendChild(formEl);
+    clearCart();
+    formEl.submit();
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
-    clearCart();
-    router.push("/checkout/confirmation");
+    setIsProcessing(true);
+
+    try {
+      if (paymentMethod === "stripe") {
+        await handleStripeCheckout();
+      } else {
+        await handleAlipayCheckout();
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      alert(error instanceof Error ? error.message : "Payment failed");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -150,8 +222,54 @@ export function CheckoutForm() {
         placeholder="United States"
       />
 
-      <Button type="submit" size="lg" className="w-full mt-6">
-        Place Order
+      <div className="mt-6 p-4 bg-surface border border-border rounded-lg">
+        <p className="text-sm font-medium text-foreground mb-3">Payment Method</p>
+        <div className="space-y-2">
+          <label className="flex items-center gap-3 p-3 border border-border rounded-lg cursor-pointer hover:bg-background transition-colors">
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="stripe"
+              checked={paymentMethod === "stripe"}
+              onChange={() => setPaymentMethod("stripe")}
+              className="w-4 h-4 text-accent"
+            />
+            <div className="flex-1">
+              <p className="text-sm font-medium">Credit/Debit Card</p>
+              <p className="text-xs text-muted">Visa, Mastercard, Apple Pay, Google Pay</p>
+            </div>
+            <svg className="w-8 h-5" viewBox="0 0 32 20" fill="none">
+              <rect width="32" height="20" rx="3" fill="#635BFF"/>
+              <path d="M13.5 12.5L14.5 7.5H16.5L15.5 12.5H13.5Z" fill="white"/>
+              <path d="M20 7.5L18 12.5H16L18 7.5H20Z" fill="white"/>
+              <path d="M24 7.5H22.5L21 10L19.5 7.5H18L20.5 12.5H22L24 7.5Z" fill="white"/>
+            </svg>
+          </label>
+          <label className="flex items-center gap-3 p-3 border border-border rounded-lg cursor-pointer hover:bg-background transition-colors">
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="alipay"
+              checked={paymentMethod === "alipay"}
+              onChange={() => setPaymentMethod("alipay")}
+              className="w-4 h-4 text-accent"
+            />
+            <div className="flex-1">
+              <p className="text-sm font-medium">Alipay</p>
+              <p className="text-xs text-muted">支付宝支付</p>
+            </div>
+            <svg className="w-8 h-5" viewBox="0 0 32 20" fill="none">
+              <rect width="32" height="20" rx="3" fill="#1677FF"/>
+              <text x="16" y="13" textAnchor="middle" fill="white" fontSize="8" fontWeight="bold">Pay</text>
+            </svg>
+          </label>
+        </div>
+      </div>
+
+      <Button type="submit" size="lg" className="w-full mt-6" disabled={isProcessing}>
+        {isProcessing
+          ? "Processing..."
+          : `Pay $${(totalPrice / 100).toFixed(2)}`}
       </Button>
     </form>
   );

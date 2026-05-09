@@ -7,8 +7,13 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-export default function ConfirmationPage() {
-  const orderId = `FJS-${Date.now().toString(36).toUpperCase()}`;
+interface ConfirmationPageProps {
+  searchParams: Promise<{ orderNo?: string; session_id?: string }>;
+}
+
+export default async function ConfirmationPage({ searchParams }: ConfirmationPageProps) {
+  const params = await searchParams;
+  const orderId = params.orderNo || params.session_id?.slice(-12).toUpperCase() || `FJS-${Date.now().toString(36).toUpperCase()}`;
 
   return (
     <div className="max-w-xl mx-auto px-4 py-20 text-center">
