@@ -1,0 +1,8 @@
+name = "football-jersey-shop"
+compatibility_date = "2024-01-01"
+
+[vars]
+YPAY_URL = "https://www.ezfpy.cn"
+YPAY_PID = "3045"
+YPAY_NOTIFY_URL = "https://yourdomain.com/api/payment/notify"
+YPAY_RETURN_URL = "https://yourdomain.com/checkout/confirmation"

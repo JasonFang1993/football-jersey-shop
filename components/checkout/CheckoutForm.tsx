@@ -65,14 +65,14 @@ export function CheckoutForm() {
       }),
     });
 
-    const result = await response.json();
+    const result = await response.json() as { success: boolean; error?: string; data?: { url: string } };
 
     if (!result.success) {
       throw new Error(result.error || "Failed to create checkout session");
     }
 
     clearCart();
-    window.location.href = result.data.url;
+    window.location.href = result.data!.url;
   };
 
   const handleAlipayCheckout = async () => {
@@ -85,13 +85,13 @@ export function CheckoutForm() {
       }),
     });
 
-    const result = await response.json();
+    const result = await response.json() as { success: boolean; error?: string; data?: { paymentUrl: string; params: Record<string, string> } };
 
     if (!result.success) {
       throw new Error(result.error || "支付请求失败");
     }
 
-    const { paymentUrl, params } = result.data;
+    const { paymentUrl, params } = result.data!;
 
     const formEl = document.createElement("form");
     formEl.method = "POST";
