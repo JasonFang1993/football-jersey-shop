@@ -29,8 +29,8 @@ function ProductsContent({ products }: { products: Product[] }) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">All Jerseys</h1>
-        <p className="text-sm text-gray-500 mt-1">{filtered.length} products</p>
+        <h1 className="text-2xl font-bold text-foreground">All Jerseys</h1>
+        <p className="text-sm text-muted mt-1">{filtered.length} products</p>
       </div>
 
       <div className="flex items-center justify-between mb-4 lg:hidden">

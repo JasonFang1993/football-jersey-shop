@@ -45,11 +45,11 @@ export function FilterSidebar() {
       {activeFilters.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">Active Filters</span>
+            <span className="text-sm font-medium text-foreground">Active Filters</span>
             <button
               type="button"
               onClick={() => router.push("/products")}
-              className="text-xs text-emerald-600 hover:text-emerald-700"
+              className="text-xs text-accent hover:text-accent-hover"
             >
               Clear all
             </button>

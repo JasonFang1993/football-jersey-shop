@@ -78,7 +78,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
           <span
             className={`inline-flex items-center px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
               product.inStock
-                ? "bg-emerald-500/10 text-emerald-400"
+                ? "bg-accent/10 text-accent"
                 : "bg-red-500/10 text-red-400"
             }`}
           >
